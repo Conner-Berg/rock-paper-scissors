@@ -16,11 +16,11 @@ function startRockPaperScissors() {
 			`${result}\nTo play again, type "rock", "paper", "scissors".`
 		);
 	}
-	setTimeout(showPlayerSelection, 1); // Chrome wouldn't console.log between prompts without setTimeout
+	showPlayerSelection();
 }
 
 function showPlayerSelection() {
-	console.log(`You typed: ${playerSelection}`);
+	setTimeout(console.log(`You typed: ${playerSelection}`), 1); // Chrome wouldn't console.log() between prompts() without setTimeout()
 	checkPlayerSelection();
 }
 
