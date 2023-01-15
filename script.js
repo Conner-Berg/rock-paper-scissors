@@ -1,44 +1,36 @@
-let playerSelection;
-let computerSelection;
-let result;
-let rps = false;
-
-function startRockPaperScissors() {
-	if (playerSelection === undefined) {
-		playerSelection = prompt(
-			'Hi, lets play Rock-Paper-Scissors!\nTo start playing, type "rock", "paper", "scissors".\nTo play a 5 round game, type "5".'
-		);
-	} else if (rps) {
-		playerSelection = prompt(
-			`${result}\nTo play again, type "rock", "paper", "scissors".\nTo play a 5 round game, type "5".`
-		);
-	}
-	setTimeout(showPlayerSelection(), 1); // Chrome wouldn't console.log() between prompts() without setTimeout()
-	checkPlayerSelection();
-	playRound();
-	startRockPaperScissors();
-}
-
-function showPlayerSelection() {
-	console.log(`You typed: ${playerSelection}`);
-}
-
-function checkPlayerSelection() {
-	if (playerSelection === "5") {
-		game();
-	} else if (
-		playerSelection.toLowerCase() === "rock" ||
-		playerSelection.toLowerCase() === "paper" ||
-		playerSelection.toLowerCase() === "scissors"
-	) {
-		return (rps = true);
+function setResult() {
+	if (playerWins === 5) {
+		rock.remove();
+		paper.remove();
+		scissors.remove();
+		result.textContent = `Wow, you've won the game! Congratulations!`;
+	} else if (playerLoses === 5) {
+		rock.remove();
+		paper.remove();
+		scissors.remove();
+		result.textContent = `Unfortunately, you've lost. Better luck next time.`;
 	} else {
-		alert(
-			"Hmm, I didn't understand what you typed.\nPress OK, or refresh the page to start over."
-		);
-		playerSelection = undefined;
-		return (rps = false);
+		result.textContent = `${resultStr}`;
 	}
+}
+
+function setScore() {
+	score.textContent = `YOU: ${playerWins}\r\nCPU: ${playerLoses}\r\nTIES: ${ties}`;
+}
+
+function setRock() {
+	playerSelection = "rock";
+	playRound();
+}
+
+function setPaper() {
+	playerSelection = "paper";
+	playRound();
+}
+
+function setScissors() {
+	playerSelection = "scissors";
+	playRound();
 }
 
 function getComputerSelection() {
@@ -53,58 +45,46 @@ function getComputerSelection() {
 }
 
 function playRound() {
-	if (rps) {
-		getComputerSelection();
-		if (playerSelection === computerSelection) {
-			result = "It's a tie!";
-		} else if (
-			(playerSelection === "rock" && computerSelection === "scissors") ||
-			(playerSelection === "paper" && computerSelection === "rock") ||
-			(playerSelection === "scissors" && computerSelection === "paper")
-		) {
-			result = "You win!";
-		} else {
-			result = "You lose!";
-		}
-		result = `The computer picked ${computerSelection}. ${result}`;
-		console.log(result);
-		return result;
-	}
-}
-
-function game() {
-	let ties = 0;
-	let playerWins = 0;
-	let playerLoses = 0;
-	let gameScore;
-	for (let gameNum = 1; gameNum <= 5; ++gameNum) {
-		playerSelection = prompt(
-			`Alright, round ${gameNum}!\nType "rock", "paper", "scissors".`
-		);
-		setTimeout(showPlayerSelection(), 1);
-		checkPlayerSelection();
-		playRound();
-		if (result.includes("tie")) {
-			ties += 1;
-		} else if (result.includes("win")) {
-			playerWins += 1;
-		} else if (result.includes("lose")) {
-			playerLoses += 1;
-		}
-	}
-	if (playerWins > playerLoses) {
-		gameScore = "Wow, you've won the game! Congratulations!";
-	} else if (playerWins < playerLoses) {
-		gameScore = "Unfortunately, you've lost. Better luck next time.";
+	getComputerSelection();
+	if (playerSelection === computerSelection) {
+		resultStr = "It's a tie!";
+	} else if (
+		(playerSelection === "rock" && computerSelection === "scissors") ||
+		(playerSelection === "paper" && computerSelection === "rock") ||
+		(playerSelection === "scissors" && computerSelection === "paper")
+	) {
+		resultStr = "You win!";
 	} else {
-		gameScore =
-			"Looks like it's a complete tie! Try again to see if you can beat the computer.";
+		resultStr = "You lose!";
 	}
-	alert(
-		`And that's the game! Here's the score:\nWins: ${playerWins}\nLoses: ${playerLoses}\nTies: ${ties}\n${gameScore}`
-	);
-	playerSelection = undefined;
-	rps = false;
+	resultStr = `The computer picked ${computerSelection.toUpperCase()}.\r\n${resultStr}`;
+	if (resultStr.includes("tie")) {
+		ties += 1;
+	} else if (resultStr.includes("win")) {
+		playerWins += 1;
+	} else if (resultStr.includes("lose")) {
+		playerLoses += 1;
+	}
+	setResult();
+	setScore();
 }
 
-startRockPaperScissors();
+let playerSelection;
+let computerSelection;
+let resultStr;
+let playerWins = 0;
+let playerLoses = 0;
+let ties = 0;
+
+let result = document.querySelector(".result");
+
+let score = document.querySelector(".score");
+
+let rock = document.querySelector(".rock");
+rock.addEventListener("click", setRock);
+
+let paper = document.querySelector(".paper");
+paper.addEventListener("click", setPaper);
+
+let scissors = document.querySelector(".scissors");
+scissors.addEventListener("click", setScissors);
